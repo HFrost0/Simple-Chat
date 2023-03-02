@@ -1,0 +1,10 @@
+.idea
+.vscode
+.fleet
+.pytest_cache
+__pycache__/
+*.egg-info/
+*.pyc
+venv*/
+build/
+dist/

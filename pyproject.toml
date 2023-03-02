@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "simple_chat"
+dynamic = ["version"]
+description = "Chat with OpenAI ChatGPT in your command line."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.7"
+authors = [
+    { name = "HFrost0", email = "hhlfrost@gmail.com" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "openai>=0.27.0",
+    "rich"
+]
+
+[project.scripts]
+schat = "simple_chat:main"
+
+[project.urls]
+Homepage = "https://github.com/HFrost0/Simple-Chat"
+
+[tool.hatch.version]
+path = "simple_chat/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/simple_chat",
+]

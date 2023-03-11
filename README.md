@@ -6,6 +6,9 @@ Chat with OpenAI ChatGPT in your command line, just for simple and ez.
 ## setup
 ```shell
 pip install git+https://github.com/HFrost0/Simple-Chat.git
+
+# or install from PyPI
+pip install schat
 ```
 
 Before you start, pls set your environment variable

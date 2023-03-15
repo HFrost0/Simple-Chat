@@ -20,7 +20,7 @@ just use command `schat` to communicate with ChatGPT
 schat
 ```
 example:
-```shell
+```
 schat
 
 🙋Please Input: Can u write a python hello world program and explain it

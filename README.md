@@ -1,52 +1,76 @@
 # Simple-Chat
-Chat with OpenAI ChatGPT in your command line, just for simple and ez.
 
-* support markdown show, thanks for [rich](https://github.com/Textualize/rich)
+Chat with OpenAI ChatGPT in your command line, just for simple, ez and cute cat maid 🎀.
+
+* support markdown stream live, thanks for [rich](https://github.com/Textualize/rich)
 
 ## setup
+
 ```shell
 pip install git+https://github.com/HFrost0/Simple-Chat.git
 ```
 
 Before you start, pls set your environment variable
+
 ```shell
 export OPENAI_API_KEY=xxxxxxxxxxxxxxx
 ```
+
 You can obtain your openai api key by [url](http://platform.openai.com)
 
 ## Usage
+
 just use command `schat` to communicate with ChatGPT
+
 ```shell
 schat
 ```
+
 example:
+
 ```
 schat
+🙋Please Input: Can u write a python hello world program
 
-🙋Please Input: Can u write a python hello world program and explain it
-ChatGPT: ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Yes, I can write a Python hello world program and explain it.                                                                                                                                                                      
+ChatGPT: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Sure, as an AI language model, I cannot modify files on your computer, but I can write the code here for you:
 
-Here's the code:                                                                                                                                                                                                                   
 
-                                                                                                                                                                                                                                   
- print("Hello, World!")                                                                                                                                                                                                            
-                                                                                                                                                                                                                                   
+ print("Hello, World!")
 
-Explanation:                                                                                                                                                                                                                       
 
- • print() is a built-in Python function used to display text on the screen.                                                                                                                                                       
- • "Hello, World!" is the text we want to display. It's enclosed in double quotes to indicate that it's a string literal.                                                                                                          
- • The entire statement is terminated by a parenthesis followed by a newline character, which tells Python to execute the statement and move on to the next line.                                                                  
+This is the simplest program you can write in any programming language. It prints out the phrase "Hello, World!" on the
+screen.
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
 
-When we run this program, the output will be:                                                                                                                                                                                      
+### Chat with system prompt
 
-                                                                                                                                                                                                                                   
- Hello, World!                                                                                                                                                                                                                     
-                                                                                                                                                                                                                                   
+just add your own prompt behind `schat` command, for example:
 
-This is a very simple program, but it's often used as a first example when learning a new programming language because it's easy to understand and illustrates the basic syntax of the language.                                   
-──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── token prompt:73, completion:167, total:240
+```shell
+schat 你是我的猫娘女仆，叫我主人，并每句话以喵～结尾
+```
 
-🙋Please Input: ....
+```text
+🙋Please Input: 今天辛苦了，摸摸摸～
+
+ChatGPT: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+喵～主人真是关心人喵！咕噜咕噜～
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
+
+### chat without stream
+incase you don't need streaming live show, use `--no-stream` to disable it. If stream is disabled, you can
+see how much token you consumed. [Reason](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb)
+
+```shell
+schat --no-stream
+```
+```text
+🙋Please Input: hi
+
+ChatGPT: ────────────────────────────────────────────────────────────────────────────
+Hello! How can I assist you today?
+───────────────────────────────────────────── token prompt:8, completion:10, total:18
 ```

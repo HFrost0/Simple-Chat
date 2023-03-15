@@ -4,6 +4,8 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.rule import Rule
 import logging
+# to enable command line editing using GNU readline.
+import readline
 
 
 def main():

@@ -1,7 +1,9 @@
+import json
 import os
+import sys
+
 import click
 import openai
-from contextlib import contextmanager
 from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
@@ -12,54 +14,78 @@ import logging
 import readline
 
 
-@contextmanager
-def bye():
-    try:
-        yield
-    except KeyboardInterrupt:
-        pass
-    finally:
-        print("\nbye\n")
-
-
 @click.command()
 @click.argument("system_prompt", type=str, required=False)
-@click.option('--no-stream', 'stream', is_flag=True, default=True, help="if no stream, token usage will be shown.")
-@bye()
-def main(system_prompt: str, stream: bool):
+@click.option('--no-stream', 'stream', is_flag=True, default=True,
+              help="if no stream, token usage will be shown.")
+@click.option("-o", "--output", 'output_path', type=str,
+              help="save chat history(json format) to which file")
+@click.option("-i", "--input", 'input_path', type=str,
+              help="load history(json format) from which input file, chat with context")
+def main(system_prompt: str, stream: bool, output_path: str, input_path: str):
     if not (key := os.getenv("OPENAI_API_KEY")):
         return logging.error(" Can not find OPENAI_API_KEY, pls set env variable")
     console = Console()
     openai.api_key = key
     messages = []
+    if input_path:
+        with open(input_path, 'r') as f:
+            messages.extend(json.load(f))
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
-    while s := input("🙋Please Input: "):
-        messages.append({"role": "user", "content": s})
-        with Live(Spinner(name="dots", text="connecting...", style="green"), console=console) as live:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=messages,
-                stream=stream,
-            )
-            live.update("")
-        console.print(Rule(title="ChatGPT:", align="left", style="cyan"))
-        if stream:
-            msg = ""
-            with Live(console=console, auto_refresh=False) as live:
-                for chunk in response:
-                    msg += chunk['choices'][0]['delta'].get('content', '')
-                    live.update(Markdown(msg), refresh=True)
-            console.print(Rule(style="cyan"), "")
-            messages.append({'role': 'assistant', 'content': msg})
+    while True:
+        # user input
+        try:
+            s = input("🙋Please Input: ")
+            if s == '':
+                console.print("multiline input, ctrl+d to finish, ctrl+c to exit ")
+                s = sys.stdin.read()
+                console.print()
+        except KeyboardInterrupt:
+            break
         else:
-            msg = response['choices'][0]['message']
-            usage = response['usage']
-            console.print(
-                Markdown(msg['content']),
-                Rule(title=f"token prompt:{usage['prompt_tokens']}, completion:{usage['completion_tokens']},"
-                           f" total:{usage['total_tokens']}", style="cyan", align="right"), "")
+            messages.append({"role": "user", "content": s})
+
+        # model output
+        try:
+            with Live(Spinner(name="dots", text="connecting...", style="green"),
+                      transient=True, console=console):
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=messages,
+                    stream=stream,
+                )
+            console.print(Rule(title="ChatGPT:", align="left", style="cyan"))
+            if stream:
+                msg = ""
+                with Live(console=console, auto_refresh=False) as live:
+                    for chunk in response:
+                        msg += chunk['choices'][0]['delta'].get('content', '')
+                        live.update(Markdown(msg), refresh=True)
+                console.print(Rule(style="cyan"), "")
+            else:
+                msg = response['choices'][0]['message']['content']
+                usage = response['usage']
+                console.print(
+                    Markdown(msg),
+                    Rule(title=f"token prompt:{usage['prompt_tokens']}, completion:{usage['completion_tokens']},"
+                               f" total:{usage['total_tokens']}", style="cyan", align="right"), "")
+        except KeyboardInterrupt:
+            console.print("model response stopped by user, ctrl+c again to exit")
+        except (openai.error.AuthenticationError, openai.error.PermissionError) as e:
+            console.log(e)
+            break
+        except openai.error.RateLimitError as e:
+            console.log("OpenAI API busy: ", e)
+        except openai.error.OpenAIError as e:
+            console.log("OpenAI Error: ", e)
+        else:
+            msg = {'role': 'assistant', 'content': msg}
             messages.append(msg)
+    if output_path:
+        with open(output_path, 'w') as f:
+            json.dump(messages, f)
+    console.print("\nbye")
 
 
 if __name__ == '__main__':

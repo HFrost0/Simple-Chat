@@ -22,7 +22,7 @@ You can obtain your openai api key by [url](http://platform.openai.com)
 
 ## Usage
 
-just use command `schat` to communicate with ChatGPT
+just use command `schat` to communicate with ChatGPT, and `ctrl+c` to exit
 
 ```shell
 schat
@@ -62,13 +62,63 @@ ChatGPT: ───────────────────────�
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ```
 
-### chat without stream
+### Multiline input
+
+just press enter to input multiple line, really useful! 😄
+
+```text
+🙋Please Input:
+multiline input, ctrl+d to finish, ctrl+c to exit
+what's the meaning of this code:
+
+print("hello world')
+
+^D
+
+ChatGPT: ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+The code is trying to print the string "hello world" on the screen. However, there is an error in the code as the
+closing quotation mark is missing. The correct code should be:
+
+ print("hello world")
+
+This will print the string "hello world" on the screen.
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
+
+### Save and load history
+
+use `-o --output` to save chat history(json), use `-i --input` to load history.
+
+```shell
+schat -o test.json
+schat -i test.json
+```
+
+data will be saved like
+
+```json
+[
+  {
+    "role": "user",
+    "content": "hi"
+  },
+  {
+    "role": "assistant",
+    "content": "\n\nHello there! How can I assist you today?"
+  }
+]
+```
+
+### Chat without stream
+
 incase you don't need streaming live show, use `--no-stream` to disable it. If stream is disabled, you can
-see how much token you consumed. [Reason](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb)
+see how much token you
+consumed. [Reason](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb)
 
 ```shell
 schat --no-stream
 ```
+
 ```text
 🙋Please Input: hi
 
@@ -76,3 +126,8 @@ ChatGPT: ───────────────────────�
 Hello! How can I assist you today?
 ───────────────────────────────────────────── token prompt:8, completion:10, total:18
 ```
+
+## ⚠️ Heads up!
+
+Notice that openai chatgpt api is stateless, long history chat means a lot of token consumption.
+

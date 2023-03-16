@@ -65,7 +65,7 @@ def main(system_prompt: str, stream: bool, output_path: str, input_path: str):
                     Rule(title=f"token prompt:{usage['prompt_tokens']}, completion:{usage['completion_tokens']},"
                                f" total:{usage['total_tokens']}", style="cyan", align="right"), "")
         except KeyboardInterrupt:
-            console.print("model response stopped by user, ctrl+c again to exit")
+            console.log("model response stopped by user, ctrl+c again to exit")
         except (openai.error.AuthenticationError, openai.error.PermissionError) as e:
             console.log(e)
             break

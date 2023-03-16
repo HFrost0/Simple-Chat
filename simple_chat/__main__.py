@@ -1,7 +1,5 @@
 import json
-import os
 import sys
-
 import click
 import openai
 from rich.console import Console
@@ -9,7 +7,6 @@ from rich.live import Live
 from rich.markdown import Markdown
 from rich.spinner import Spinner
 from rich.rule import Rule
-import logging
 # to enable command line editing using GNU readline.
 import readline
 
@@ -23,10 +20,7 @@ import readline
 @click.option("-i", "--input", 'input_path', type=str,
               help="load history(json format) from which input file, chat with context")
 def main(system_prompt: str, stream: bool, output_path: str, input_path: str):
-    if not (key := os.getenv("OPENAI_API_KEY")):
-        return logging.error(" Can not find OPENAI_API_KEY, pls set env variable")
     console = Console()
-    openai.api_key = key
     messages = []
     if input_path:
         with open(input_path, 'r') as f:

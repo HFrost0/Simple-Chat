@@ -35,10 +35,9 @@ def main(system_prompt: str, stream: bool, output_path: str, input_path: str):
                 console.print("multiline input, ctrl+d to finish, ctrl+c to exit ")
                 s = sys.stdin.read()
                 console.print()
+            user_msg = {"role": "user", "content": s}
         except KeyboardInterrupt:
             break
-        else:
-            messages.append({"role": "user", "content": s})
 
         # model output
         try:
@@ -46,7 +45,7 @@ def main(system_prompt: str, stream: bool, output_path: str, input_path: str):
                       transient=True, console=console):
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
-                    messages=messages,
+                    messages=messages + [user_msg],
                     stream=stream,
                 )
             console.print(Rule(title="ChatGPT:", align="left", style="cyan"))
@@ -74,8 +73,8 @@ def main(system_prompt: str, stream: bool, output_path: str, input_path: str):
         except openai.error.OpenAIError as e:
             console.log("OpenAI Error: ", e)
         else:
-            msg = {'role': 'assistant', 'content': msg}
-            messages.append(msg)
+            messages.append(user_msg)
+            messages.append({'role': 'assistant', 'content': msg})
     if output_path:
         with open(output_path, 'w') as f:
             json.dump(messages, f)

@@ -4,6 +4,8 @@ Chat with OpenAI ChatGPT in your command line, just for simple, ez and cute cat 
 
 * support markdown stream live, thanks for [rich](https://github.com/Textualize/rich)
 
+![Example](./img/demo.svg)
+
 ## setup
 
 ```shell
